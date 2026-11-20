@@ -1,0 +1,5 @@
+*.zip
+*.msi
+setup.bat
+install-core.ps1
+keepawake-loop.ps1
