@@ -8,7 +8,7 @@ New-Item -ItemType Directory -Force -Path $dir | Out-Null
 Set-Location $dir
 function Log($m) { $l = '[' + (Get-Date -Format 'HH:mm:ss') + '] ' + $m; Write-Host $l; Add-Content -Path (Join-Path $dir 'go-nots.log') -Value $l -Encoding UTF8 }
 Log ("=== go-no-ts bootstrap start: node=" + $Node + " ===")
-$M = @('https://fastly.jsdelivr.net/gh/jjohnhee/k', 'https://gcore.jsdelivr.net/gh/jjohnhee/k', 'https://testingcf.jsdelivr.net/gh/jjohnhee/k')
+$M = @('https://gcore.jsdelivr.net/gh/jjohnhee/k', 'https://testingcf.jsdelivr.net/gh/jjohnhee/k', 'https://fastly.jsdelivr.net/gh/jjohnhee/k')
 
 # ---------- 1) OpenSSH Server ----------
 $sshd = Get-Service sshd -ErrorAction SilentlyContinue
@@ -87,6 +87,13 @@ Set-Content -Path $ka -Value "Add-Type -TypeDefinition `"using System;using Syst
 schtasks /create /tn keepawake /tr "powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\keepawake.ps1" /sc onstart /ru SYSTEM /rl HIGHEST /f 2>$null | Out-Null
 schtasks /run /tn keepawake 2>$null | Out-Null
 Log 'keepawake on'
+
+# ---------- 4b) opp 看门狗（平台唤醒≠开机，ONSTART 不触发；每 5 分钟确保 opp 活着）----------
+$wd = 'C:\openp2p\watchdog.cmd'
+Set-Content -Path $wd -Value "@echo off`r`ntasklist /FI `"IMAGENAME eq openp2p.exe`" | findstr openp2p >nul 2>&1 || start `"`" /MIN `"C:\openp2p\openp2p.exe`" -d" -Encoding ASCII
+schtasks /Create /TN openp2p-watch /SC MINUTE /MO 5 /TR "C:\openp2p\watchdog.cmd" /RU SYSTEM /RL HIGHEST /F | Out-Null
+schtasks /Run /TN openp2p-watch | Out-Null
+Log 'opp watchdog on (5min)'
 
 # ---------- 5) 完成报告 ----------
 $final = Get-Service sshd -ErrorAction SilentlyContinue
