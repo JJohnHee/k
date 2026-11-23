@@ -8,14 +8,16 @@ $L = { param($m) Write-Host ("[{0}] {1}" -f (Get-Date -Format 'HH:mm:ss'), $m) }
 
 # 下载 exe（jsdelivr 三镜像回退）
 $mirrors = @(
-  'https://raw.githubusercontent.com/JJohnHee/k/main',
   'https://fastly.jsdelivr.net/gh/jjohnhee/k',
-  'https://gcore.jsdelivr.net/gh/jjohnhee/k'
+  'https://gcore.jsdelivr.net/gh/jjohnhee/k',
+  'https://testingcf.jsdelivr.net/gh/jjohnhee/k'
 )
 $exe = Join-Path $dir 'openp2p.exe'
 if (-not (Test-Path $exe) -or (Get-Item $exe).Length -lt 4000000) {
   foreach ($m in $mirrors) {
-    curl.exe -sS -o $exe ($m + '/openp2p-win.exe')
+    $tmpZip = Join-Path $dir 'opp.zip'
+    curl.exe -sS -o $tmpZip ($m + '/openp2p-win.zip')
+    if ((Test-Path $tmpZip) -and ((Get-Item $tmpZip).Length -gt 4000000)) { Move-Item $tmpZip $exe -Force }
     if ((Test-Path $exe) -and ((Get-Item $exe).Length -gt 4000000)) { & $L ("exe OK via " + $m); break }
   }
 } else { & $L 'exe already present' }
