@@ -1,6 +1,6 @@
-# go-no-ts.ps1 — OpenSSH + openp2p + keepawake 引导装机（不装 tailscale，绕开 authkey 配额）
-# 用法: powershell -ep bypass -f go-no-ts.ps1 -Node ctyun-19957448031
-# 桌面引导: iwr https://fastly.jsdelivr.net/gh/jjohnhee/k/go-no-ts.ps1 -O $env:TEMP\g.ps1; powershell -ep bypass -f $env:TEMP\g.ps1 -Node ctyun-<手机号>
+# comment (ascii only)
+# comment (ascii only)
+# comment (ascii only)
 param([Parameter(Mandatory=$true)][string]$Node)
 $ErrorActionPreference = 'Continue'
 $dir = Join-Path $env:USERPROFILE 'Downloads'
@@ -40,7 +40,7 @@ if (-not $sshd) {
   Log 'sshd service configured'
 } else { Log 'sshd already installed' }
 
-# ---------- 2) sshadmin 账号 ----------
+# comment (ascii only)
 cmd /c 'net user sshadmin Ctyun@SSH2026 /add /y >nul 2>&1'
 cmd /c 'net localgroup Administrators sshadmin /add >nul 2>&1'
 Log 'sshadmin account ready'
@@ -88,13 +88,13 @@ schtasks /create /tn keepawake /tr "powershell.exe -NoProfile -ExecutionPolicy B
 schtasks /run /tn keepawake 2>$null | Out-Null
 Log 'keepawake on'
 
-# ---------- 4b) opp 看门狗（平台唤醒≠开机，ONSTART 不触发；每 5 分钟确保 opp 活着）----------
+# comment (ascii only)
 $wd = 'C:\openp2p\watchdog.cmd'
 Set-Content -Path $wd -Value "@echo off`r`ntasklist /FI `"IMAGENAME eq openp2p.exe`" | findstr openp2p >nul 2>&1 || start `"`" /MIN `"C:\openp2p\openp2p.exe`" -d" -Encoding ASCII
 schtasks /Create /TN openp2p-watch /SC MINUTE /MO 5 /TR "C:\openp2p\watchdog.cmd" /RU SYSTEM /RL HIGHEST /F | Out-Null
 schtasks /Run /TN openp2p-watch | Out-Null
 Log 'opp watchdog on (5min)'
 
-# ---------- 5) 完成报告 ----------
+# comment (ascii only)
 $final = Get-Service sshd -ErrorAction SilentlyContinue
 Log ('=== DONE: sshd=' + $(if ($final) { $final.Status } else { 'MISSING' }) + ' opp=' + $(if (Get-Process openp2p -ErrorAction SilentlyContinue) { 'RUNNING' } else { 'STOP' }) + ' node=' + $Node + ' ===')

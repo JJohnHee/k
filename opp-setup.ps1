@@ -1,12 +1,12 @@
-# opp-setup.ps1 — 通用 openp2p 部署脚本（参数 -Node 指定节点名）
-# 用法: powershell -ep bypass -f opp-setup.ps1 -Node ctyun-19957448031
+# comment (ascii only)
+# comment (ascii only)
 param([Parameter(Mandatory=$true)][string]$Node)
 $ErrorActionPreference = 'Continue'
 $dir = 'C:\openp2p'
 New-Item -ItemType Directory -Force -Path $dir | Out-Null
 $L = { param($m) Write-Host ("[{0}] {1}" -f (Get-Date -Format 'HH:mm:ss'), $m) }
 
-# 下载 exe（jsdelivr 三镜像回退）
+# comment (ascii only)
 $mirrors = @(
   'https://fastly.jsdelivr.net/gh/jjohnhee/k',
   'https://gcore.jsdelivr.net/gh/jjohnhee/k',
@@ -22,7 +22,7 @@ if (-not (Test-Path $exe) -or (Get-Item $exe).Length -lt 4000000) {
   }
 } else { & $L 'exe already present' }
 
-# 配置
+# comment (ascii only)
 $config = @"
 {
   "network": {
@@ -40,7 +40,7 @@ $config = @"
 Set-Content -Path (Join-Path $dir 'config.json') -Value $config -Encoding UTF8
 & $L 'config written'
 
-# 计划任务（SYSTEM 开机自启 + 立即运行）
+# comment (ascii only)
 schtasks /Create /TN openp2p /SC ONSTART /TR "C:\openp2p\openp2p.exe -d" /RU SYSTEM /RL HIGHEST /F | Out-Null
 schtasks /End /TN openp2p 2>$null | Out-Null
 Get-Process openp2p -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
@@ -49,7 +49,7 @@ Start-Sleep -Seconds 5
 $p = Get-Process openp2p -ErrorAction SilentlyContinue
 if ($p) { & $L ("openp2p RUNNING pid=" + ($p.Id -join ',')) } else { & $L 'openp2p NOT-RUNNING' }
 
-# 看门狗（每 5 分钟：平台唤醒≠开机，ONSTART 不触发）
+# comment (ascii only)
 $wd = Join-Path $dir 'watchdog.cmd'
 Set-Content -Path $wd -Value "@echo off`r`ntasklist /FI `"IMAGENAME eq openp2p.exe`" | findstr openp2p >nul 2>&1 || start `"`" /MIN `"C:\openp2p\openp2p.exe`" -d" -Encoding ASCII
 schtasks /Create /TN openp2p-watch /SC MINUTE /MO 5 /TR "C:\openp2p\watchdog.cmd" /RU SYSTEM /RL HIGHEST /F | Out-Null

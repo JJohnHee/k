@@ -1,5 +1,5 @@
-# go-all.ps1 — 终版装机：OpenSSH(portable fallback) + tailscale(新key) + openp2p(看门狗) + keepawake
-# 桌面引导: powershell -ep bypass -c "iwr https://gcore.jsdelivr.net/gh/jjohnhee/k/go-all.ps1 -O $env:TEMP\g.ps1; powershell -ep bypass -f $env:TEMP\g.ps1 -Node ctyun-<手机号>"
+# comment (ascii only)
+# comment (ascii only)
 param(
   [Parameter(Mandatory=$true)][string]$Node,
   [string]$AuthKey = 'tskey-auth-kysWXMhN3m11CNTRL-h836cfgfofCCvcsFZjwEgCxsVDYBY44pA'
@@ -44,7 +44,7 @@ cmd /c 'net user sshadmin Ctyun@SSH2026 /add /y >nul 2>&1'
 cmd /c 'net localgroup Administrators sshadmin /add >nul 2>&1'
 Log 'sshadmin ready'
 
-# ---------- 2) tailscale（新 authkey）----------
+# comment (ascii only)
 $tsExe = Join-Path $env:ProgramFiles 'Tailscale\tailscale.exe'
 if (-not (Test-Path $tsExe)) {
   Log 'installing tailscale msi...'
@@ -64,7 +64,7 @@ if (Test-Path $tsExe) {
   & $tsExe up --authkey=$AuthKey --hostname=$Node --reset 2>&1 | ForEach-Object { Log ("TS: " + $_) }
 } else { Log 'no tailscale exe' }
 
-# ---------- 3) openp2p + 看门狗 ----------
+# comment (ascii only)
 $opp = 'C:\openp2p'
 New-Item -ItemType Directory -Force -Path $opp | Out-Null
 $exe = Join-Path $opp 'openp2p.exe'
