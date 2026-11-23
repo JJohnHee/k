@@ -48,3 +48,10 @@ schtasks /Run /TN openp2p
 Start-Sleep -Seconds 5
 $p = Get-Process openp2p -ErrorAction SilentlyContinue
 if ($p) { & $L ("openp2p RUNNING pid=" + ($p.Id -join ',')) } else { & $L 'openp2p NOT-RUNNING' }
+
+# 看门狗（每 5 分钟：平台唤醒≠开机，ONSTART 不触发）
+$wd = Join-Path $dir 'watchdog.cmd'
+Set-Content -Path $wd -Value "@echo off`r`ntasklist /FI `"IMAGENAME eq openp2p.exe`" | findstr openp2p >nul 2>&1 || start `"`" /MIN `"C:\openp2p\openp2p.exe`" -d" -Encoding ASCII
+schtasks /Create /TN openp2p-watch /SC MINUTE /MO 5 /TR "C:\openp2p\watchdog.cmd" /RU SYSTEM /RL HIGHEST /F | Out-Null
+schtasks /Run /TN openp2p-watch | Out-Null
+& $L 'watchdog on (5min)'
