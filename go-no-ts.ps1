@@ -19,18 +19,19 @@ if (-not $sshd) {
     Log ('OpenSSH capability OK, needRestart=' + $r.RestartNeeded)
   } catch {
     Log ('capability failed: ' + $_.Exception.Message + ' — portable fallback')
-    $zip = Join-Path $dir 'OpenSSH-Win64.zip'
-    foreach ($m in $M) { curl.exe -sS -o $zip ($m + '/OpenSSH-Win64.zip'); if ((Test-Path $zip) -and ((Get-Item $zip).Length -gt 4000000)) { Log 'zip OK'; break } }
-    if (Test-Path $zip) {
+    $zip = Join-Path $dir 'OpenSSH-portable.zip'
+    foreach ($m in $M) { curl.exe -sS -o $zip ($m + '/OpenSSH-portable.zip'); if ((Test-Path $zip) -and ((Get-Item $zip).Length -gt 2000000)) { Log 'OpenSSH zip OK'; break } }
+    if ((Test-Path $zip) -and ((Get-Item $zip).Length -gt 2000000)) {
       $tmp = Join-Path $env:TEMP 'openssh-extract'
       if (Test-Path $tmp) { Remove-Item $tmp -Recurse -Force -ErrorAction SilentlyContinue }
       Expand-Archive -Path $zip -DestinationPath $tmp -Force
-      $src = Join-Path $tmp 'OpenSSH-Win64'
-      & (Join-Path $src 'install-sshd.ps1')
-      $acl = Join-Path $src 'FixUserFilePermissions.ps1' -ErrorAction SilentlyContinue
-      if (Test-Path $acl) { & $acl -Confirm:$false }
-      Copy-Item $src "$env:ProgramData\OpenSSH" -Recurse -Force -ErrorAction SilentlyContinue
-    }
+      $pf = Join-Path $env:ProgramFiles 'OpenSSH'
+      New-Item -ItemType Directory -Force -Path $pf | Out-Null
+      Copy-Item (Join-Path $tmp '*') $pf -Recurse -Force
+      Push-Location $pf
+      & (Join-Path $pf 'install-sshd.ps1') 2>&1 | ForEach-Object { Log ('sshd-install: ' + $_) }
+      Pop-Location
+    } else { Log 'FATAL: OpenSSH zip download failed' }
   }
   Set-Service sshd -StartupType Automatic -ErrorAction SilentlyContinue
   Set-Service ssh-agent -StartupType Automatic -ErrorAction SilentlyContinue
