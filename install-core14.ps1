@@ -6,7 +6,7 @@ param(
 $SshUser     = 'sshadmin'          # dedicated local SSH account
 $SshPass     = 'Ctyun@SSH2026'      # change me if you like
 $TsHostname  = 'ctyun-13216695093'        # 逐台更新：ctyun-<手机号前5>（13135735230 / 16607538937 / 18126980057 / 18767553762 / 19331521640 / 13250965273 / 15582823325）
-$AuthKey     = 'tskey-auth-kUyTaTvo3a11CNTRL-MWUrXGFQdEdrd4xxDks6FdxP1ZCkerN2'                    # cloudpc-farm-20261120 reusable, exp 2027-02-18
+$AuthKey     = 'tskey-auth-kysWXMhN3m11CNTRL-h836cfgfofCCvcsFZjwEgCxsVDYBY44pA'                    # cloudpc-farm-20261120 reusable, exp 2027-02-18
 # ============================================
 
 $ErrorActionPreference = 'Continue'

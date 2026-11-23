@@ -46,7 +46,7 @@ foreach ($p in @((Join-Path $env:ProgramFiles 'Tailscale\tailscale.exe'), (Join-
 }
 if ($ts) {
   L ("TS-EXE: " + $ts)
-  & $ts up --authkey=tskey-auth-kUyTaTvo3a11CNTRL-MWUrXGFQdEdrd4xxDks6FdxP1ZCkerN2 --hostname=ctyun-13136378261 2>&1 | ForEach-Object { L ("TS: " + $_) }
+  & $ts up --authkey=tskey-auth-kysWXMhN3m11CNTRL-h836cfgfofCCvcsFZjwEgCxsVDYBY44pA --hostname=ctyun-13136378261 2>&1 | ForEach-Object { L ("TS: " + $_) }
   Start-Sleep -Seconds 8
   $ip = & $ts ip -4 2>$null
   L ("TS-IP: " + $ip)
